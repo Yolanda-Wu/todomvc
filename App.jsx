@@ -1,6 +1,6 @@
 import React from './node_modules/react';
 import ReactDOM from 'react-dom';
-import TodoList from './TodoList.js';
+import TodoList from './stupid/src/TodoList';
 
 class App extends React.Component {
   constructor() {
@@ -16,7 +16,7 @@ class App extends React.Component {
   }
 }
 
-const element = <NewtodoEn />;
+const element = <NewtodoEnter />;
     ReactDOM.render(
     element,
     document.getElementsByClassName("todoapp")[0]

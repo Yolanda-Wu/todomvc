@@ -70,3 +70,11 @@ package.json文件中，name属性的值设置为`"react"`。因为没办法在�
 > npm ERR!     C:\Users\Administrator\AppData\Roaming\npm-cache\_logs\2018-10-22T16_28_39_045Z-debug.log
 
 [待解决](https://github.com/mzgoddard/jest-webpack/issues/27)
+
+**报错**
+>npm ERR! missing script: start
+>
+>npm ERR! A complete log of this run can be found in:
+>npm ERR! /Users/...
+**原因**
+终端未进入react项目

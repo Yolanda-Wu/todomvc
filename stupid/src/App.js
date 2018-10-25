@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import ReactDOM from 'react-dom';
 import './App.css';
+import {todoList} from './index'
+import { TodoList } from './TodoList';
 
 class App extends Component {
   render() {
@@ -10,7 +12,7 @@ class App extends Component {
           <span className="title">todos</span>
         </header>
         <main className="todoapp">
-
+          <EnterInput />
           <section className="main"></section>
           <section className="footer"></section>
         </main>
@@ -23,5 +25,73 @@ class App extends Component {
     );
   }
 }
+
+class EnterInput extends Component {
+  constructor() {
+    super();
+  }
+  render() {
+    return <input className="newtodo" placeholder="What need to be done?" onKeyDown={this.addNewTodo}/>;
+  }
+  addNewTodo(event) {
+    let todo = document.getElementsByClassName("newtodo")[0];
+    if(event.keyCode == 13) {
+      todoList.addTodo(todo.value);
+      ReactDOM.render(<RefreshTodoList />, 
+        document.getElementsByClassName("main")[0]);
+      todo.value = '';
+    }
+  }
+}
+
+class RefreshTodoList extends Component {
+  constructor() {
+    super();
+    this.todoList = todoList.getAlltodos();
+    this.todoValues = todoList.getAlltodosValues();
+    this.todoButtons = todoList.getAlltodosButtons();
+  }
+
+  render() {
+
+    const lis = this.todoList.map((todoList) =>
+      <li className="todoli" key={todoList.value}>
+        <Checkbox checked={todoList.done}/>
+        <label className="todovalue">{todoList.value}</label>
+        <button className="destroy">delete</button>
+      </li>
+    );
+    return (
+      <ul>{lis}</ul>
+    );
+  }
+}
+
+class Checkbox extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {checked: props.checked};
+  }
+
+  changeCheckbox() {
+    this.setState({
+      checked: !this.state.checked
+    });
+  }
+
+  render() {
+    return (
+      <input 
+        className="checkbox" 
+        type="checkbox" 
+        checked={this.state} 
+        onChange={this.changeCheckbox}/>
+    )
+  }
+}
+
+
+
+
 
 export default App;
