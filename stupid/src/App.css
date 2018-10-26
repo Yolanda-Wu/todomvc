@@ -35,6 +35,15 @@ li {
   justify-content: space-between;
   background-color: white;
 }
+.todovalue {
+  background-color: white;
+}
+.edit {
+  
+}
+.hidden {
+  display: none;
+}
 .destroy {
   visibility: hidden;
 }

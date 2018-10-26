@@ -76,5 +76,41 @@ package.json文件中，name属性的值设置为`"react"`。因为没办法在�
 >
 >npm ERR! A complete log of this run can be found in:
 >npm ERR! /Users/...
+
 **原因**
 终端未进入react项目
+
+
+
+[翻译 | 玩转 React 表单 —— 受控组件详解](https://juejin.im/post/5979c26df265da3e0f117aa9)
+
+**Bind()**
+
+绑定函数
+
+**报错**
+
+TypeError: Cannot read property 'setState' of undefined 
+
+> ```
+>  changeCheckbox() {
+> > 77 |   this.setState({
+> ^ 78 |     checked: !this.state.checked
+>   79 |   });
+>   80 | }
+> ```
+
+
+
+**原因**
+
+> 你必须谨慎对待 JSX 回调函数中的 `this`，类的方法默认是不会[绑定](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_objects/Function/bind) `this` 的。如果你忘记绑定 `this.handleClick` 并把它传入 `onClick`, 当你调用这个函数的时候 `this` 的值会是 `undefined`。 
+
+
+
+2018-01-08 发布
+
+# [CSS效果篇--纯CSS+HTML实现checkbox的思路与实例](https://segmentfault.com/a/1190000012748027)
+
+> 隐藏原生`input`，样式定义的过程留给`label` （那为什么不直接改变`checkbox`的样式？因为checkbox作为浏览器默认组件，样式更改上并没有label那么方便，很多属性对`checkbox`都是不起作用的，比如`background`,而`label`在样式上基本和`div`一样'任人宰割') 
+
