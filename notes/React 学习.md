@@ -114,3 +114,111 @@ TypeError: Cannot read property 'setState' of undefined
 
 > 隐藏原生`input`，样式定义的过程留给`label` （那为什么不直接改变`checkbox`的样式？因为checkbox作为浏览器默认组件，样式更改上并没有label那么方便，很多属性对`checkbox`都是不起作用的，比如`background`,而`label`在样式上基本和`div`一样'任人宰割') 
 
+
+
+**状态提升**
+
+
+
+## Git
+
+> warning: LF will be replaced by CRLF in .idea/workspace.xml.
+> The file will have its original line endings in your working directory.
+
+[git一些使用感受和经历](http://www.bloggern.com/ProjectItem.php?ProjectItemId=6426)
+
+[GitHub 第一坑：换行符自动转换](https://github.com/cssmagic/blog/issues/22)
+
+[Git Config 命令查看配置文件](https://cnbin.github.io/blog/2015/06/19/git-config-ming-ling-cha-kan-pei-zhi-wen-jian/)
+
+[Git 多平台换行符问题(LF or CRLF)](http://blog.konghy.cn/2017/03/19/git-lf-or-crlf/)
+
+
+
+react刷新不正常问题
+
+state，props的问题，constructor只在实例化是调用一次，以后就不调用了，重新渲染后，没有调用constructor中的this .state的初始化，所以state的值并没有改变
+
+```javascript
+constructor(props) {
+    super(props);
+    this.myref = React.createRef();
+    this.index = props.index;
+    this.todoList = todoList.getAlltodos();
+    this.state = {value: props.value};
+  }
+
+handleKeyDown(e) {
+    const node = this.myref.current;
+    const label = node.getElementsByClassName("hidden")[0];
+    const textarea = node.getElementsByClassName("edit")[0];
+    let text;
+    if(e.keyCode === 13 && textarea.value != '') {
+      text = textarea.value;
+      this.todoList[this.index].value = text;
+      this.setState({value: text});
+      label.className = "todovalue";
+      textarea.className = "hidden";
+    } else if ((e.keyCode === 13 && textarea.value === '') || (e.keyCode === 8 && textarea.value ==='')) {
+      this.todoList.splice(this.index, 1);
+      label.className = "todovalue";
+      textarea.className = "hidden";
+      this.props.onKeyDown();
+    }
+  }
+
+render() {
+    console.log(this.props);
+    console.log(this.state);
+    return (
+      <div ref={this.myref}>
+        <label
+          className="todovalue"
+          onDoubleClick={this.handleClick.bind(this)}>
+          {this.props.value}
+        </label>
+        <textarea
+          className="hidden"
+          defaultValue={this.props.value}
+          onKeyDown={this.handleKeyDown.bind(this)}></textarea>
+      </div>
+    )
+  }
+  
+```
+
+删除第一个后，控制台输出：
+
+> {value: "2", index: 0, onKeyDown: ƒ}
+> App.js:138 {value: "1"}
+> App.js:137 {value: "3", index: 1, onKeyDown: ƒ}
+> App.js:138 {value: "2"}
+> App.js:137 {value: "4", index: 2, onKeyDown: ƒ}
+> App.js:138 {value: "3"}
+
+（react重新刷新时，是部分刷新，一共四个组件，重新渲染时，是把最后一个组件移除，前面三个组件重新传入props，所以state仍然是以前的值，与后来传入的state无关）
+
+所以，即使重新渲染前更改state仍然没有用：
+
+```
+handleKeyDown(e) {
+    const node = this.myref.current;
+    const label = node.getElementsByClassName("hidden")[0];
+    const textarea = node.getElementsByClassName("edit")[0];
+    let text;
+    if(e.keyCode === 13 && textarea.value != '') {
+      text = textarea.value;
+      this.todoList[this.index].value = text;
+      this.setState({value: text});
+      label.className = "todovalue";
+      textarea.className = "hidden";
+    } else if ((e.keyCode === 13 && textarea.value === '') || (e.keyCode === 8 && textarea.value ==='')) {
+      this.todoList.splice(this.index, 1);
+      label.className = "todovalue";
+      textarea.className = "hidden";
+      this.setState({value: text});
+      this.props.onKeyDown();
+    }
+  }
+```
+

@@ -13,7 +13,8 @@ class App extends Component {
         </header>
         <main className="todoapp">
           <EnterInput />
-          <section className="main"></section>
+          <section className="main">
+          </section>
           <section className="footer"></section>
         </main>
         <footer className="info">
@@ -27,8 +28,8 @@ class App extends Component {
 }
 
 class EnterInput extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
   }
   render() {
     return <input className="newtodo" placeholder="What need to be done?" onKeyDown={this.addNewTodo}/>;
@@ -45,26 +46,53 @@ class EnterInput extends Component {
 }
 
 class RefreshTodoList extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.todoList = todoList.getAlltodos();
-    this.todoValues = todoList.getAlltodosValues();
-    this.todoButtons = todoList.getAlltodosButtons();
-    this.state = {refresh: 0}
+    this.state = {refresh: 0};
   }
 
   handleKeyDown() {
-    this.setState(preState => {
-      return {refresh: preState.refresh　+ 1};
-    })
+    this.setState((prevState) => ({
+      refresh: ++prevState.refresh
+    }));
   }
 
   render() {
     let i = 0;
-    const lis = this.todoList.map((todoList) =>
+    const lis = this.todoList.map((todo) =>
       <li className="todoli" key={i}>
-        <Checkbox checked={todoList.done} index={i}/>
-        <Ainput value={todoList.value} index={i} onKeyDown={this.handleKeyDown.bind(this)}/>
+        <Checkbox checked={todo.done} index={i}/>
+        <Ainput value={todo.value} index={i} onKeyDown = {this.handleKeyDown.bind(this)}/>
+        <button className="destroy" index={i++}>delete</button>
+      </li>
+    );
+    return (
+      <ul refresh={this.state.refresh}>{lis}</ul>
+    );
+  }
+}
+
+/*
+class RefreshTodoList extends Component {
+  constructor(props) {
+    super(props);
+    this.todoList = todoList.getAlltodos();
+    this.todoValues = todoList.getAlltodosValues();
+    this.todoButtons = todoList.getAlltodosButtons();
+    this.state = {todoList: this.todoList};
+  }
+
+  handleKeyDown() {
+    this.setState({todoList: this.todoList});
+  }
+
+  render() {
+    let i = 0;
+    const lis = this.state.todoList.map((todo) =>
+      <li className="todoli" key={i}>
+        <Checkbox checked={todo.done} index={i}/>
+        <Ainput value={todo.value} index={i} onKeyDown = {this.handleKeyDown.bind(this)}/>
         <button className="destroy" index={i++}>delete</button>
       </li>
     );
@@ -87,7 +115,6 @@ class Checkbox extends Component {
       return {checked: !preState.checked}
     });
     this.todoList[this.index].done = !this.todoList[this.index].done;
-    console.log(this.todoList);
   }
 
   render() {
@@ -129,27 +156,32 @@ class Ainput extends Component {
       textarea.className = "hidden";
     } else if ((e.keyCode === 13 && textarea.value === '') || (e.keyCode === 8 && textarea.value ==='')) {
       this.todoList.splice(this.index, 1);
+      label.className = "todovalue";
+      textarea.className = "hidden";
+      this.setState({value: text});
       this.props.onKeyDown();
     }
   }
 
   render() {
+    console.log(this.props);
+    console.log(this.state);
     return (
       <div ref={this.myref}>
         <label
           className="todovalue"
           onDoubleClick={this.handleClick.bind(this)}>
-          {this.state.value}
+          {this.props.value}
         </label>
         <textarea
           className="hidden"
-          defaultValue={this.state.value}
+          defaultValue={this.props.value}
           onKeyDown={this.handleKeyDown.bind(this)}></textarea>
       </div>
     )
   }
 }
-
+*/
 
 
 
