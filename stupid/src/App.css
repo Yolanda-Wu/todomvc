@@ -25,7 +25,6 @@ li {
   width: 30px;
   height: 30px;
   border-color: #dddddd;
-  background-color: white;
   border-radius: 50%;
 }
 .todoli {
@@ -45,6 +44,12 @@ li {
   display: none;
 }
 .destroy {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: none;
+  background-color: white;
+  background-image: url(./cross.svg);
   visibility: hidden;
 }
 .todoli:hover .destroy {

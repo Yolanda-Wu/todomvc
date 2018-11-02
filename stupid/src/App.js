@@ -7,7 +7,17 @@ import { TodoList } from './TodoList';
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {todosRefresh: 0, inquiryRefresh: 0};
+    this.state = {todosRefresh: 0, inquiryRefresh: 0, route: window.location.hash.substr(1)};
+    //console.log(window.location.hash);
+  }
+
+  componentDidMount() {
+    window.addEventListener('hashchange', () => {
+      this.setState({
+        route: window.location.hash.substr(1)
+      })
+      //console.log(window.location.hash);
+    })
   }
 
   handleNewAdd() {
@@ -21,9 +31,17 @@ class App extends Component {
     this.setState((prevState) => ({
       inquiryRefresh: prevState.inquiryRefresh++
     }));
+    //console.log(todoList.getAlltodos());
   }
 
   render() {
+    let RefreshTodoList;
+    switch (this.state.route) {
+      case 'active': RefreshTodoList = Activetodos; break;
+      case 'completed': RefreshTodoList = Compeletedtodos; break;
+      default:      RefreshTodoList = Alltodos;
+    }
+    
     return (
       <div className="App">
         <header>
@@ -32,7 +50,7 @@ class App extends Component {
         <main className="todoapp">
           <EnterInput refreshTodoList={this.handleNewAdd.bind(this)}/>
           <RefreshTodoList refresh={this.state.todosRefresh} onChange={this.handleInquiryRefresh.bind(this)}/>
-          <Inquiry refresh={this.state.inquiryRefresh} />
+          <Inquiry refresh={this.state.inquiryRefresh} onClear={this.handleInquiryRefresh.bind(this)}/>
         </main>
         <footer className="info">
           <p>Double-click to edit a todo</p>
@@ -58,13 +76,11 @@ class EnterInput extends Component {
       todoList.addTodo(todo.value);
       todo.value = '';
       this.refreshTodoList();
-      //console.log(this.refreshTodoList);
-      //console.log(todoList);
     }
   }
 }
 
-class RefreshTodoList extends Component {
+class Alltodos extends Component {
   constructor(props) {
     super(props);
     this.todoList = todoList.getAlltodos();
@@ -78,16 +94,75 @@ class RefreshTodoList extends Component {
   }
 
   render() {
-    let i = 0;
     //console.log(this.todoList);
     const lis = this.todoList.map((todo) =>
       <li className="todoli" key={todo.value}>
-        <Checkbox checked={todo.done} index={i} onChange={this.props.onChange.bind(this)} />
+        <Checkbox checked={todo.done} index={this.todoList.indexOf(todo)} onChange={this.props.onChange.bind(this)} />
         <Ainput 
-          value={todo.value} index={i} 
+          value={todo.value} index={this.todoList.indexOf(todo)} 
           onKeyDown = {this.handleKeyDown.bind(this)} 
           onChange={this.props.onChange.bind(this)} />
-        <button className="destroy" index={i++}>delete</button>
+      </li>
+    );
+    return (
+      <ul refresh={this.state.refresh}>{lis}</ul>
+    );
+  }
+}
+
+class Activetodos extends Component {
+  constructor(props) {
+    super(props);
+    this.todoList = todoList.getAlltodos();
+    this.state = {refresh: 0};
+  }
+
+  handleKeyDown() {
+    this.setState((prevState) => ({
+      refresh: ++prevState.refresh
+    }));
+  }
+
+  render() {
+    let todoUndoneList = todoList.getUndonetodos();
+    const lis = todoUndoneList.map((todo) =>
+      <li className="todoli" key={todo.value}>
+        <Checkbox checked={todo.done} index={this.todoList.indexOf(todo)} onChange={this.props.onChange.bind(this)} />
+        <Ainput 
+          value={todo.value} index={this.todoList.indexOf(todo)} 
+          onKeyDown = {this.handleKeyDown.bind(this)} 
+          onChange={this.props.onChange.bind(this)} />
+      </li>
+    );
+    return (
+      <ul refresh={this.state.refresh}>{lis}</ul>
+    );
+  }
+}
+
+class Compeletedtodos extends Component {
+  constructor(props) {
+    super(props);
+    this.todoList = todoList.getAlltodos();
+    this.state = {refresh: 0};
+  }
+
+  handleKeyDown() {
+    this.setState((prevState) => ({
+      refresh: ++prevState.refresh
+    }));
+  }
+
+  render() {
+    console.log("this.todoDoneList");
+    let todoDoneList = todoList.getDonetodos();
+    const lis = todoDoneList.map((todo) =>
+      <li className="todoli" key={todo.value}>
+        <Checkbox checked={todo.done} index={this.todoList.indexOf(todo)} onChange={this.props.onChange.bind(this)} />
+        <Ainput 
+          value={todo.value} index={this.todoList.indexOf(todo)} 
+          onKeyDown = {this.handleKeyDown.bind(this)} 
+          onChange={this.props.onChange.bind(this)} />
       </li>
     );
     return (
@@ -128,8 +203,22 @@ class Ainput extends Component {
     }
   }
 
+  handleBlur() {
+    const node = this.myref.current;
+    const label = node.getElementsByClassName("hidden")[0];
+    const textarea = node.getElementsByClassName("edit")[0];
+    label.className = "todovalue";
+    textarea.className = "hidden";
+  }
+
+  handleClick() {
+    this.todoList.splice(this.props.index, 1);
+    this.props.onChange();
+    this.props.onKeyDown();
+  }
+
   render() {
-    console.log(this.props);
+    //console.log(this.props);
     return (
       <div ref={this.myref}>
         <label
@@ -138,9 +227,11 @@ class Ainput extends Component {
           {this.state.value}
         </label>
         <textarea
+          onBlur={this.handleBlur.bind(this)}
           className="hidden"
           defaultValue={this.state.value}
           onKeyDown={this.handleKeyDown.bind(this)}></textarea>
+        <button className="destroy" onClick={this.handleClick.bind(this)}></button>
       </div>
     )
   }
@@ -149,13 +240,17 @@ class Ainput extends Component {
 class Checkbox extends Component {
   constructor(props) {
     super(props);
-    this.index = props.index;
     this.todoList = todoList.getAlltodos();
     this.state = {checked: props.checked};
   }
 
   changeCheckbox() {
-    this.todoList[this.index].done = !this.todoList[this.index].done;
+    this.todoList[this.props.index].done = !this.todoList[this.props.index].done;
+    //console.log(this.todoList);
+    //console.log(this.props.index);
+    this.setState((prevState) => ({
+      checked: !prevState.checked
+    }))
     this.props.onChange();
   }
 
@@ -180,7 +275,7 @@ class Inquiry extends Component {
       <footer className="footer">
         <TodoCount />
         <Filter />
-        <button>Clear Completed</button>
+        <ClearAll onClear={this.props.onClear.bind(this)}/>
       </footer>
     )
   }
@@ -189,21 +284,20 @@ class Inquiry extends Component {
 class TodoCount extends Component {
   constructor(props) {
     super(props);
-    this.count = todoList.getUndonetodos().length;
-    this.str = "";
   }
 
   render() {
-    this.count = todoList.getUndonetodos().length;
-    if (this.count === 1) {
-      this.str = "item";
+    let count = todoList.getUndonetodos().length;
+    let str = '';
+    if (count === 1) {
+      str = "item";
     } else {
-      this.str = "items";
+      str = "items";
     }
     return (
       <span>
-        <span>{this.count}</span>
-        <span>{this.str}</span>
+        <span>{count}</span>
+        <span>{str}</span>
         <span>left</span>
       </span>
     )
@@ -213,41 +307,48 @@ class TodoCount extends Component {
 class Filter extends Component {
   constructor(props) {
     super(props);
-    this.allRef = null;
-    this.activeRef = null;
-    this.completedRef = null;
-    this.getAllRef = element => {
-      this.allRef = element;
-    };
-    this.getActiveRef = element => {
-      this.activeRef = element;
-    };
-    this.completedRef = element => {
-      this.completedRef = element;
-    }
-  }
-
-  handleClick() {
-    
   }
 
   render() {
     return (
       <ul>
         <li key="All">
-          <a onClick={this.handleClick.bind(this)} ref={this.getAllRef}>All</a>
+          <a href="#">All</a>
         </li>
         <li key="Active">
-          <a onClick={this.handleClick.bind(this)} ref={this.getActiveRef}>Active</a>
+          <a href="#active">Active</a>
         </li>
         <li key="Compeleted">
-          <a onClick={this.handleClick.bind(this)} ref={this.getCompletedRef}>Completed</a>
+          <a href="#completed">Completed</a>
         </li>
       </ul>
     )
   }
 }
 
+class ClearAll extends Component {
+  constructor(props) {
+    super(props);
+    this.todoList = todoList.getAlltodos();
+  }
+
+  handleClick() {
+    for (let i = 0; i < this.todoList.length; i++) {
+      if (this.todoList[i].done) {
+        this.todoList.splice(i, 1);
+        i--;
+        //console.log(this.todoList);
+      }
+    }
+    this.props.onClear();
+  }
+
+  render() {
+    return (
+      <button onClick={this.handleClick.bind(this)}>Clear Completed</button>
+    )
+  }
+}
 
 /*
 class RefreshTodoList extends Component {
