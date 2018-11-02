@@ -253,3 +253,34 @@ this.props.router.push({pathname: '链接',query:{参数:34543}})
 
 **React路由库**
 
+推荐教程：https://medium.com/@pshrmn/a-simple-react-router-v4-tutorial-7f23ff27adf
+
+get your feet wet: 尝试新东西，获取新经验。
+
+在React Router v4 之前的版本，react router使用伪组件（pseudo-component），难于理解，在v4中，一切都是组件。
+
+* 选择组件
+* 创建组件
+* 使用链接连接组件
+
+**安装**
+
+React Router被分成三个包：`react-router`, `react-router-dom`, 和 `react-router-native`. 
+
+我们几乎不需要直接安装`react-router`
+
+```javascript
+npm install --save react-router-dom
+```
+
+
+
+前端路由：[原生js实现前端路由](https://juejin.im/entry/5887833d8d6d81006cf781b4)
+
+
+
+**todomvc遗留问题**
+
+待做事件不能相同
+
+**注意**： constructor里面的变量仅初始化一次！！！
