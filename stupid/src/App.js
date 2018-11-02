@@ -220,7 +220,7 @@ class Ainput extends Component {
   render() {
     //console.log(this.props);
     return (
-      <div ref={this.myref}>
+      <div ref={this.myref} className="a_input">
         <label
           className="todovalue"
           onDoubleClick={this.handleDoubleClick.bind(this)}>
@@ -255,12 +255,22 @@ class Checkbox extends Component {
   }
 
   render() {
+    let buttonClass;
+    if (this.state.checked) {
+      buttonClass = "done";
+    } else {
+      buttonClass = "undone";
+    }
     return (
+      <div>
       <input 
         className="checkbox" 
         type="checkbox" 
-        defaultChecked={this.state.checked} 
-        onChange={this.changeCheckbox.bind(this)}/>
+        defaultChecked={this.state.checked} />
+      <button 
+        className={buttonClass} 
+        onClick={this.changeCheckbox.bind(this)}></button>
+      </div>
     )
   }
 }
@@ -271,13 +281,19 @@ class Inquiry extends Component {
   }
 
   render() {
-    return (
-      <footer className="footer">
-        <TodoCount />
-        <Filter />
-        <ClearAll onClear={this.props.onClear.bind(this)}/>
-      </footer>
-    )
+    if (todoList.getAlltodos().length === 0) {
+      return (
+        <footer></footer>
+      )
+    } else {
+      return (
+        <footer className="footer">
+          <TodoCount />
+          <Filter />
+          <ClearAll onClear={this.props.onClear.bind(this)}/>
+        </footer>
+      )
+    }
   }
 }
 
@@ -290,13 +306,13 @@ class TodoCount extends Component {
     let count = todoList.getUndonetodos().length;
     let str = '';
     if (count === 1) {
-      str = "item";
+      str = "item ";
     } else {
-      str = "items";
+      str = "items ";
     }
     return (
-      <span>
-        <span>{count}</span>
+      <span className="count">
+        <span>{count + " "}</span>
         <span>{str}</span>
         <span>left</span>
       </span>
@@ -311,7 +327,7 @@ class Filter extends Component {
 
   render() {
     return (
-      <ul>
+      <ul className="filter">
         <li key="All">
           <a href="#">All</a>
         </li>
@@ -345,7 +361,9 @@ class ClearAll extends Component {
 
   render() {
     return (
-      <button onClick={this.handleClick.bind(this)}>Clear Completed</button>
+      <button 
+        className="clear_all"
+        onClick={this.handleClick.bind(this)}>Clear Completed</button>
     )
   }
 }

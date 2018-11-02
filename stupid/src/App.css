@@ -2,12 +2,29 @@ li {
   list-style: none;
 }
 .App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
 }
 .title {
   font-size: 100px;
   text-align: center;
   color: rgba(175, 47, 47, 0.15);
+}
+
+.todoapp {
+  display: flex;
+  width: 474px;
+  margin-bottom: 50px;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
+}
+
+ul {
+  margin: 0;
+  padding: 0;
 }
 .info p {
   font-size: 10px;
@@ -18,28 +35,68 @@ li {
   width: 474px;
   height: 33px;
   border: none;
+  border-bottom: 1px solid #ededed;
   padding: 16px 16px 16px 60px;
   font-size: 24px;
 }
 .checkbox {
+  width: 40px;
+  height: 40px;
+  margin: 9px 0px;
+  opacity: 0;
+}
+
+.undone {
   width: 30px;
   height: 30px;
-  border-color: #dddddd;
+  position: relative;
+  right: 32px;
+  bottom: 7px;
+  border: 1px solid #777;
+  background-color: white;
   border-radius: 50%;
 }
+
+.done {
+  width: 30px;
+  height: 30px;
+  position: relative;
+  right: 32px;
+  bottom: 7px;
+  background-color: white;
+  border: 1px solid #777777;
+  border-radius: 50%;
+  background-image: url(./selected_cilcle.svg);
+}
+
 .todoli {
   width: 550px;
   height: 58px;
   display: flex;
-  justify-content: space-between;
+  border-bottom: 1px solid #ededed;
+  align-items: center;
   background-color: white;
 }
+
+.a_input {
+  display: flex;
+  justify-content: space-between;
+  width: 475px;
+  height: 28px;
+  text-align: left;
+}
+
 .todovalue {
   background-color: white;
+  width: 475px;
+  height: 28px;
 }
+
 .edit {
-  
+  width: 475px;
+  height: 28px;
 }
+
 .hidden {
   display: none;
 }
@@ -54,4 +111,43 @@ li {
 }
 .todoli:hover .destroy {
   visibility: visible;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  color: #777;
+  padding: 10px 15px;
+  width: 520px;
+  height: 20px;
+  font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2), 0 8px 0 -3px #f6f6f6, 0 9px 1px -3px rgba(0, 0, 0, 0.2), 0 16px 0 -6px #f6f6f6, 0 17px 2px -6px rgba(0, 0, 0, 0.2);
+}
+
+.count {
+  
+}
+
+.filter {
+  display: flex;
+}
+
+.filter a {
+  color: #777;
+  margin: 3px;
+  padding: 3px 7px;
+  text-decoration: none;
+  border-radius: 3px;
+  border: 1px solid rgba(175, 47, 47, 0.2);
+}
+
+.filter .selected {
+
+}
+
+.clear_all {
+  border: none;
+  color: #777;
+  background-color: white;
 }
